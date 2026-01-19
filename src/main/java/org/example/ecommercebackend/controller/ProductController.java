@@ -72,7 +72,15 @@ public class ProductController {
             @RequestParam("q") String query) {
         
         logger.info("Received request to search products with query: {}", query);
-        List<ProductResponse> products = productService.searchProductsByName(query);
+        
+        // Validate search query
+        if (query == null || query.trim().isEmpty()) {
+            logger.warn("Empty search query received");
+            return ResponseEntity.ok(List.of());
+        }
+        
+        List<ProductResponse> products = productService.searchProductsByName(query.trim());
+        logger.info("Found {} products matching query: {}", products.size(), query);
         return ResponseEntity.ok(products);
     }
 }
