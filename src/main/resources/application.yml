@@ -4,21 +4,17 @@ spring:
 
   data:
     mongodb:
-      uri: mongodb+srv://${MONGODB_USERNAME}:${MONGODB_PASSWORD}@${MONGODB_CLUSTER}/${MONGODB_DATABASE}?retryWrites=true&w=majority
-      # For local MongoDB, use:
-      # uri: mongodb://localhost:27017/ecommerce_db
+      uri: ${spring.data.mongodb.uri}
+      database: ${MONGODB_DATABASE:ecommerce_db}
 
 server:
   port: ${SERVER_PORT:8080}
 
-# Logging configuration
 logging:
   level:
     root: INFO
     org.example.ecommercebackend: DEBUG
-    org.springframework.data.mongodb: INFO
 
-# Mock Payment Service Configuration
 mock:
   payment:
     delay-ms: ${MOCK_PAYMENT_DELAY_MS:3000}
