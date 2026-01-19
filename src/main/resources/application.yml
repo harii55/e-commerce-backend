@@ -4,27 +4,22 @@ spring:
 
   data:
     mongodb:
-      uri: mongodb://localhost:27017/ecommerce_db
-      # Alternative configuration:
-      # host: localhost
-      # port: 27017
-      # database: ecommerce_db
-      # username: your_username
-      # password: your_password
-      # authentication-database: admin
+      uri: mongodb+srv://${MONGODB_USERNAME}:${MONGODB_PASSWORD}@${MONGODB_CLUSTER}/${MONGODB_DATABASE}?retryWrites=true&w=majority
+      # For local MongoDB, use:
+      # uri: mongodb://localhost:27017/ecommerce_db
 
 server:
-  port: 8080
+  port: ${SERVER_PORT:8080}
 
 # Logging configuration
 logging:
   level:
     root: INFO
     org.example.ecommercebackend: DEBUG
-    org.springframework.data.mongodb: DEBUG
+    org.springframework.data.mongodb: INFO
 
 # Mock Payment Service Configuration
 mock:
   payment:
-    delay-ms: 3000
-    success-rate: 0.8
+    delay-ms: ${MOCK_PAYMENT_DELAY_MS:3000}
+    success-rate: ${MOCK_PAYMENT_SUCCESS_RATE:0.8}
