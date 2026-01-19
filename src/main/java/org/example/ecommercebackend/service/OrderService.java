@@ -40,4 +40,9 @@ public interface OrderService {
      * Update order status to FAILED.
      */
     void markOrderAsFailed(String orderId);
+
+    /**
+     * Cancel an order and restore stock.
+     */
+    OrderResponse cancelOrder(String orderId);
 }

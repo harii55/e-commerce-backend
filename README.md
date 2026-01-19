@@ -88,6 +88,7 @@ The server will start on `http://localhost:8080`
 | POST | `/api/orders` | Create order from cart |
 | GET | `/api/orders/{orderId}` | Get order by ID |
 | GET | `/api/orders/user/{userId}` | Get user's order history |
+| POST | `/api/orders/{orderId}/cancel` | Cancel an unpaid order |
 
 ### Payments
 

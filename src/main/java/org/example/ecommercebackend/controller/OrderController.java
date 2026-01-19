@@ -62,4 +62,15 @@ public class OrderController {
         List<OrderResponse> orders = orderService.getOrdersByUserId(userId);
         return ResponseEntity.ok(orders);
     }
+
+    /**
+     * Cancel an order.
+     * POST /api/orders/{orderId}/cancel
+     */
+    @PostMapping("/{orderId}/cancel")
+    public ResponseEntity<OrderResponse> cancelOrder(@PathVariable String orderId) {
+        logger.info("Received request to cancel order: {}", orderId);
+        OrderResponse response = orderService.cancelOrder(orderId);
+        return ResponseEntity.ok(response);
+    }
 }

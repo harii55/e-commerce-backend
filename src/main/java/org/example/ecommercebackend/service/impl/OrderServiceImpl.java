@@ -4,6 +4,7 @@ import org.example.ecommercebackend.dto.request.CreateOrderRequest;
 import org.example.ecommercebackend.dto.response.OrderResponse;
 import org.example.ecommercebackend.exception.BadRequestException;
 import org.example.ecommercebackend.exception.InsufficientStockException;
+import org.example.ecommercebackend.exception.InvalidOrderStateException;
 import org.example.ecommercebackend.exception.ResourceNotFoundException;
 import org.example.ecommercebackend.model.CartItem;
 import org.example.ecommercebackend.model.Order;
@@ -176,5 +177,41 @@ public class OrderServiceImpl implements OrderService {
         orderRepository.save(order);
 
         logger.info("Order {} marked as FAILED", orderId);
+    }
+
+    @Override
+    public OrderResponse cancelOrder(String orderId) {
+        logger.info("Cancelling order: {}", orderId);
+
+        Order order = getOrderEntityById(orderId);
+
+        // Validate order can be cancelled
+        if (!order.isCancellable()) {
+            throw new InvalidOrderStateException(
+                    orderId,
+                    order.getStatus().name(),
+                    "Only orders in CREATED state can be cancelled"
+            );
+        }
+
+        // Restore stock for all items in the order
+        for (OrderItem item : order.getItems()) {
+            Product product = productRepository.findById(item.getProductId())
+                    .orElse(null);
+            
+            if (product != null) {
+                product.increaseStock(item.getQuantity());
+                productRepository.save(product);
+                logger.debug("Restored stock for product {}: +{}", product.getId(), item.getQuantity());
+            }
+        }
+
+        // Mark order as cancelled
+        order.markAsCancelled();
+        Order savedOrder = orderRepository.save(order);
+
+        logger.info("Order {} cancelled successfully. Stock restored.", orderId);
+
+        return OrderResponse.fromEntity(savedOrder);
     }
 }
