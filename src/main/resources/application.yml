@@ -24,6 +24,7 @@ logging:
     org.springframework.data.mongodb: DEBUG
 
 # Mock Payment Service Configuration
-mock-payment:
-  webhook-url: http://localhost:8080/api/webhooks/payment
-  delay-seconds: 3
+mock:
+  payment:
+    delay-ms: 3000
+    success-rate: 0.8

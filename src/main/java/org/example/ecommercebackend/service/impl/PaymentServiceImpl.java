@@ -30,11 +30,14 @@ public class PaymentServiceImpl implements PaymentService {
 
     private final PaymentRepository paymentRepository;
     private final OrderService orderService;
+    private final org.example.ecommercebackend.service.MockPaymentClient mockPaymentClient;
 
     public PaymentServiceImpl(PaymentRepository paymentRepository,
-                              @Lazy OrderService orderService) {
+                              @Lazy OrderService orderService,
+                              org.example.ecommercebackend.service.MockPaymentClient mockPaymentClient) {
         this.paymentRepository = paymentRepository;
         this.orderService = orderService;
+        this.mockPaymentClient = mockPaymentClient;
     }
 
     @Override
@@ -78,6 +81,10 @@ public class PaymentServiceImpl implements PaymentService {
 
         Payment savedPayment = paymentRepository.save(payment);
         logger.info("Payment created with ID: {} for order: {}", savedPayment.getId(), order.getId());
+
+        // Trigger async payment processing via mock gateway
+        mockPaymentClient.initiatePayment(razorpayOrderId, savedPayment.getAmount());
+        logger.info("Initiated async payment processing for Razorpay order: {}", razorpayOrderId);
 
         return PaymentResponse.fromEntity(savedPayment);
     }
